@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Interactive Kaleidoscope</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -28,6 +28,10 @@
             <div class="slider-container">
                 <label for="colorPicker">Brush Color</label>
                 <input type="color" id="colorPicker" value="#ff0000">
+            </div>
+            <div class="slider-container">
+                <label for="randomColorToggle">Random Color</label>
+                <input type="checkbox" id="randomColorToggle" style="width: 28px; height: 28px; accent-color: #818cf8;">
             </div>
             <div class="slider-container">
                 <label for="bgColorPicker">Background</label>

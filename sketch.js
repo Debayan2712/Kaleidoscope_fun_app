@@ -12,8 +12,8 @@ let sketch = function(p) {
     let brushSize = 6;
 
     // --- UI Elements ---
-    let symmetrySlider, symmetryValueSpan, clearButton, saveButton;
-    let brushSizeSlider, brushSizeValueSpan, colorPicker, bgColorPicker;
+let symmetrySlider, symmetryValueSpan, clearButton, saveButton;
+let brushSizeSlider, brushSizeValueSpan, colorPicker, bgColorPicker, randomColorToggle;
 
     // --- Setup ---
     p.setup = function() {
@@ -25,6 +25,7 @@ let sketch = function(p) {
         brushSizeValueSpan = document.getElementById('brushSizeValue');
         colorPicker = document.getElementById('colorPicker');
         bgColorPicker = document.getElementById('bgColorPicker');
+        randomColorToggle = document.getElementById('randomColorToggle');
 
         const container = document.getElementById('canvas-container');
         const canvasSize = Math.min(p.windowWidth * 0.8, p.windowHeight * 0.7);
@@ -51,6 +52,10 @@ let sketch = function(p) {
 
         colorPicker.addEventListener('input', () => {
             brushColor = colorPicker.value;
+        });
+
+        randomColorToggle.addEventListener('change', () => {
+            // No action needed, checked state will be read in draw
         });
 
         bgColorPicker.addEventListener('input', () => {
@@ -80,8 +85,17 @@ let sketch = function(p) {
             let speed = p.abs(p.mouseX - p.pmouseX) + p.abs(p.mouseY - p.pmouseY);
             let dynamicBrush = p.map(speed, 0, 20, parseInt(brushSize), Math.max(2, brushSize - 8));
             p.strokeWeight(dynamicBrush);
-            p.stroke(brushColor);
             p.noFill();
+
+            if (randomColorToggle && randomColorToggle.checked) {
+                // Use cycling hue (rainbow mode)
+                hueValue = (hueValue + 1) % 360;
+                // Convert HSL to RGB for p5.js in RGB mode
+                let c = p.color(`hsl(${hueValue}, 80%, 50%)`);
+                p.stroke(c);
+            } else {
+                p.stroke(brushColor);
+            }
 
             for (let i = 0; i < symmetry; i++) {
                 p.rotate(angle);
