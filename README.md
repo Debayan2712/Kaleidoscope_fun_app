@@ -22,11 +22,8 @@ Create mesmerizing, symmetrical digital art with this interactive kaleidoscope a
 
 ## ✨ Demo
 
-
 <p align="center">
-  <img src="demo.gif" alt="Kaleidoscope Demo GIF" width="400"/>
-  <br>
-  <img src="demo.png" alt="Kaleidoscope Demo PNG" width="400"/>
+  <img src="demo.gif" alt="Kaleidoscope Demo" width="400"/>
 </p>
 
 
