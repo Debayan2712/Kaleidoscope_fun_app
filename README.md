@@ -1,15 +1,17 @@
+
 # Interactive Kaleidoscope Art
 
 Create mesmerizing, symmetrical digital art with this interactive kaleidoscope app! Built with p5.js and styled with Tailwind CSS, this project lets you draw beautiful patterns with customizable symmetry, brush size, colors, and more.
 
 ## Features
 
-- **Live Drawing**: Draw with your mouse and see your strokes mirrored in real time.
+- **Live Drawing**: Draw with your mouse or finger and see your strokes mirrored in real time.
 - **Symmetry Control**: Adjust the number of symmetrical sections (2–20).
 - **Brush Customization**: Change brush color and size on the fly.
+- **Random Color Mode**: Toggle to cycle through rainbow colors as you draw, or pick a single color.
 - **Background Color**: Instantly set the canvas background to any color.
 - **Clear & Save**: Clear your canvas or save your artwork as a PNG.
-- **Responsive Design**: Works on any screen size.
+- **Mobile Friendly**: Fully responsive and touch-friendly for phones and tablets.
 
 ## Demo
 
