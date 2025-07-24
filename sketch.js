@@ -11,9 +11,13 @@ let sketch = function(p) {
     let maxBrush = 30;
     let brushSize = 6;
 
+    // --- Undo History ---
+    let strokes = [];
+    let currentStroke = null;
+
     // --- UI Elements ---
-let symmetrySlider, symmetryValueSpan, clearButton, saveButton;
-let brushSizeSlider, brushSizeValueSpan, colorPicker, bgColorPicker, randomColorToggle;
+    let symmetrySlider, symmetryValueSpan, clearButton, saveButton, undoButton;
+    let brushSizeSlider, brushSizeValueSpan, colorPicker, bgColorPicker, randomColorToggle;
 
     // --- Setup ---
     p.setup = function() {
@@ -21,6 +25,7 @@ let brushSizeSlider, brushSizeValueSpan, colorPicker, bgColorPicker, randomColor
         symmetryValueSpan = document.getElementById('symmetryValue');
         clearButton = document.getElementById('clearButton');
         saveButton = document.getElementById('saveButton');
+        undoButton = document.getElementById('undoButton');
         brushSizeSlider = document.getElementById('brushSizeSlider');
         brushSizeValueSpan = document.getElementById('brushSizeValue');
         colorPicker = document.getElementById('colorPicker');
@@ -42,7 +47,7 @@ let brushSizeSlider, brushSizeValueSpan, colorPicker, bgColorPicker, randomColor
             symmetry = symmetrySlider.value;
             symmetryValueSpan.textContent = symmetry;
             angle = 360 / symmetry;
-            p.background(p.color(bgColor));
+            redrawAll();
         });
 
         brushSizeSlider.addEventListener('input', () => {
@@ -60,11 +65,19 @@ let brushSizeSlider, brushSizeValueSpan, colorPicker, bgColorPicker, randomColor
 
         bgColorPicker.addEventListener('input', () => {
             bgColor = bgColorPicker.value;
-            p.background(p.color(bgColor));
+            redrawAll();
         });
 
         clearButton.addEventListener('click', () => {
-            p.background(p.color(bgColor));
+            strokes = [];
+            redrawAll();
+        });
+
+        undoButton.addEventListener('click', () => {
+            if (strokes.length > 0) {
+                strokes.pop();
+                redrawAll();
+            }
         });
 
         saveButton.addEventListener('click', () => {
@@ -75,7 +88,20 @@ let brushSizeSlider, brushSizeValueSpan, colorPicker, bgColorPicker, randomColor
     // --- Draw Loop ---
     p.draw = function() {
         p.translate(p.width / 2, p.height / 2);
+
         if (p.mouseIsPressed && p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height) {
+            if (!currentStroke) {
+                currentStroke = {
+                    points: [],
+                    symmetry: symmetry,
+                    angle: angle,
+                    brushSize: brushSize,
+                    randomColor: randomColorToggle && randomColorToggle.checked,
+                    color: brushColor,
+                    hueStart: hueValue
+                };
+            }
+
             let mx = p.mouseX - p.width / 2;
             let my = p.mouseY - p.height / 2;
             let pmx = p.pmouseX - p.width / 2;
@@ -84,18 +110,18 @@ let brushSizeSlider, brushSizeValueSpan, colorPicker, bgColorPicker, randomColor
             // Calculate mouse speed to change brush size
             let speed = p.abs(p.mouseX - p.pmouseX) + p.abs(p.mouseY - p.pmouseY);
             let dynamicBrush = p.map(speed, 0, 20, parseInt(brushSize), Math.max(2, brushSize - 8));
+
+            let colorToUse;
+            if (randomColorToggle && randomColorToggle.checked) {
+                hueValue = (hueValue + 1) % 360;
+                colorToUse = p.color(`hsl(${hueValue}, 80%, 50%)`);
+            } else {
+                colorToUse = brushColor;
+            }
+
             p.strokeWeight(dynamicBrush);
             p.noFill();
-
-            if (randomColorToggle && randomColorToggle.checked) {
-                // Use cycling hue (rainbow mode)
-                hueValue = (hueValue + 1) % 360;
-                // Convert HSL to RGB for p5.js in RGB mode
-                let c = p.color(`hsl(${hueValue}, 80%, 50%)`);
-                p.stroke(c);
-            } else {
-                p.stroke(brushColor);
-            }
+            p.stroke(colorToUse);
 
             for (let i = 0; i < symmetry; i++) {
                 p.rotate(angle);
@@ -105,13 +131,52 @@ let brushSizeSlider, brushSizeValueSpan, colorPicker, bgColorPicker, randomColor
                 p.line(mx, my, pmx, pmy);
                 p.pop();
             }
+
+            // Save this segment to the current stroke
+            currentStroke.points.push({
+                mx, my, pmx, pmy, dynamicBrush, colorToUse: randomColorToggle && randomColorToggle.checked ? hueValue : brushColor
+            });
+        } else if (currentStroke) {
+            // Mouse released, save the stroke
+            strokes.push(currentStroke);
+            currentStroke = null;
         }
     };
+
+    // Redraw all strokes from history
+    function redrawAll() {
+        p.push();
+        p.resetMatrix();
+        p.background(p.color(bgColor));
+        p.translate(p.width / 2, p.height / 2);
+        for (let s of strokes) {
+            let localHue = s.hueStart || 0;
+            for (let pt of s.points) {
+                p.strokeWeight(pt.dynamicBrush);
+                if (s.randomColor) {
+                    localHue = (localHue + 1) % 360;
+                    let c = p.color(`hsl(${localHue}, 80%, 50%)`);
+                    p.stroke(c);
+                } else {
+                    p.stroke(s.color);
+                }
+                for (let i = 0; i < s.symmetry; i++) {
+                    p.rotate(s.angle);
+                    p.line(pt.mx, pt.my, pt.pmx, pt.pmy);
+                    p.push();
+                    p.scale(1, -1);
+                    p.line(pt.mx, pt.my, pt.pmx, pt.pmy);
+                    p.pop();
+                }
+            }
+        }
+        p.pop();
+    }
 
     p.windowResized = function() {
         const canvasSize = Math.min(p.windowWidth * 0.8, p.windowHeight * 0.7);
         p.resizeCanvas(canvasSize, canvasSize);
-        p.background(p.color(bgColor));
+        redrawAll();
     };
 };
 

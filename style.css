@@ -12,18 +12,37 @@ main {
     justify-content: center;
     height: 100vh;
 }
+#canvas-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 @media (max-width: 600px) {
     main {
         height: auto;
         min-height: 100vh;
         padding: 0.5rem;
+        align-items: center;
+        justify-content: flex-start;
     }
     #canvas-container {
-        width: 100vw !important;
-        max-width: 100vw !important;
-        height: auto !important;
+        width: 98vw !important;
+        max-width: 98vw !important;
+        height: 70vw !important;
+        max-height: 70vw !important;
+        min-height: 300px;
+        min-width: 300px;
         margin-bottom: 0.5rem;
         border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    canvas {
+        width: 100% !important;
+        height: 100% !important;
+        display: block;
+        margin: 0 auto;
     }
     .controls {
         flex-direction: column;
@@ -31,6 +50,7 @@ main {
         padding: 0.5rem;
         width: 100%;
         box-sizing: border-box;
+        align-items: center;
     }
     .slider-container {
         width: 100%;
