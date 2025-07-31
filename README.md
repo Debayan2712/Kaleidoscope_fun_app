@@ -1,5 +1,3 @@
-
-
 # 🎨 Interactive Kaleidoscope Art
 
 Create mesmerizing, symmetrical digital art with this interactive kaleidoscope app!<br>
@@ -19,39 +17,35 @@ Create mesmerizing, symmetrical digital art with this interactive kaleidoscope a
 
 ---
 
-
 ## ✨ Demo
 
 <p align="center">
   <img src="demo.gif" alt="Kaleidoscope Demo" width="400"/>
 </p>
 
-
-
 ## 🛠️ Getting Started
 
 1. **Clone the repository**
+
    ```sh
-   git clone https://github.com/your-username/kaleidoscope-art.git
-   cd kaleidoscope-art
+   git clone https://github.com/Debayan2712/Kaleidoscope_fun_app.git
+   cd Kaleidoscope_fun_app
    ```
-2. **Open `kelaidoscope.html` in your browser**
+
+2. **Open `index.html` in your browser**
 
    _No build step required! All dependencies are loaded via CDN._
 
-
 ## 📁 File Structure
 
-- `kelaidoscope.html` – Main HTML file
+- `index.html` – Main HTML file
 - `style.css` – Custom styles
 - `sketch.js` – p5.js sketch logic
-
 
 ## 🧩 Customization
 
 - Change the default colors or brush settings in `sketch.js`.
-- Tweak the UI in `kelaidoscope.html` or `style.css`.
-
+- Tweak the UI in `index.html` or `style.css`.
 
 ## 🙏 Credits
 
@@ -60,7 +54,6 @@ Create mesmerizing, symmetrical digital art with this interactive kaleidoscope a
 - [Google Fonts – Inter](https://fonts.google.com/specimen/Inter)
 
 ---
-
 
 ---
 

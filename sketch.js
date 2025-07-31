@@ -33,8 +33,7 @@ let sketch = function(p) {
         randomColorToggle = document.getElementById('randomColorToggle');
 
         const container = document.getElementById('canvas-container');
-        const canvasSize = Math.min(p.windowWidth * 0.8, p.windowHeight * 0.7);
-        let canvas = p.createCanvas(canvasSize, canvasSize);
+        let canvas = p.createCanvas(p.windowWidth, p.windowHeight);
         canvas.parent(container);
 
         p.angleMode(p.DEGREES);
@@ -174,8 +173,7 @@ let sketch = function(p) {
     }
 
     p.windowResized = function() {
-        const canvasSize = Math.min(p.windowWidth * 0.8, p.windowHeight * 0.7);
-        p.resizeCanvas(canvasSize, canvasSize);
+        p.resizeCanvas(p.windowWidth , p.windowHeight * 0.7);
         redrawAll();
     };
 };

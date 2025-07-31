@@ -46,10 +46,11 @@ main {
         align-items: center;
         justify-content: center;
         background: transparent;
+        overflow: hidden;
     }
     canvas {
-        width: 100% !important;
-        height: 100% !important;
+        width: 100vw !important;
+        height: 100vh !important;
         display: block;
         margin: 0 auto;
         background: transparent;
