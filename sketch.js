@@ -7,8 +7,6 @@ let sketch = function(p) {
     let hueValue = 0; // For cycling through colors
     let brushColor = '#ff0000';
     let bgColor = '#111827';
-    let minBrush = 2;
-    let maxBrush = 30;
     let brushSize = 6;
 
     // --- Undo History ---
@@ -18,7 +16,7 @@ let sketch = function(p) {
     // --- UI Elements ---
     let symmetrySlider, symmetryValueSpan, clearButton, saveButton, undoButton;
     let brushSizeSlider, brushSizeValueSpan, colorPicker, bgColorPicker, randomColorToggle;
-    let showToolbar = false;
+    let showToolbar = false, firstTouch = true, greeting = "draw something with your fingers";
 
     // --- Setup ---
     p.setup = function() {
@@ -49,6 +47,11 @@ let sketch = function(p) {
         p.angleMode(p.DEGREES);
         p.colorMode(p.RGB, 255, 255, 255, 255);
         p.background(p.color(bgColor));
+        p.fill(100);
+        p.textSize(18);
+        p.textFont('Courier New');
+        p.textAlign(p.CENTER, p.CENTER);
+        p.text(greeting, p.width/2, p.height/2);
         angle = 360 / symmetry;
 
         // --- Event Listeners for Controls ---
@@ -68,9 +71,9 @@ let sketch = function(p) {
             brushColor = colorPicker.value;
         });
 
-        randomColorToggle.addEventListener('change', () => {
+        // randomColorToggle.addEventListener('change', () => {
             // No action needed, checked state will be read in draw
-        });
+        // });
 
         bgColorPicker.addEventListener('input', () => {
             bgColor = bgColorPicker.value;
@@ -111,7 +114,13 @@ let sketch = function(p) {
     p.draw = function() {
         p.translate(p.width / 2, p.height / 2);
 
-        if (p.mouseIsPressed && p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height && !isOverToolbar(p.mouseX, p.mouseY)) {
+        if (p.mouseIsPressed && !isOverToolbar(p.mouseX, p.mouseY)
+            && p.mouseX > 0 && p.mouseX < p.width
+            && p.mouseY > 0 && p.mouseY < p.height) {
+      
+            if (firstTouch) p.background(p.color(bgColor));
+            firstTouch = false;
+
             if (!currentStroke) {
                 currentStroke = {
                     points: [],
