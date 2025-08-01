@@ -18,6 +18,7 @@ let sketch = function(p) {
     // --- UI Elements ---
     let symmetrySlider, symmetryValueSpan, clearButton, saveButton, undoButton;
     let brushSizeSlider, brushSizeValueSpan, colorPicker, bgColorPicker, randomColorToggle;
+    let showToolbar = false;
 
     // --- Setup ---
     p.setup = function() {
@@ -31,6 +32,15 @@ let sketch = function(p) {
         colorPicker = document.getElementById('colorPicker');
         bgColorPicker = document.getElementById('bgColorPicker');
         randomColorToggle = document.getElementById('randomColorToggle');
+
+        const controls = document.querySelector('.controls');
+        const toggler = controls.querySelector('.toggler');
+        const chevron = toggler.querySelector('svg');
+        toggler.addEventListener('click', () => {
+            showToolbar = !showToolbar;
+            showToolbar ? controls.style.height = 'initial' : controls.style.height = '3em';
+            chevron.style.rotate = showToolbar ? '180deg' : '0deg';
+        })
 
         const container = document.getElementById('canvas-container');
         let canvas = p.createCanvas(p.windowWidth, p.windowHeight);
@@ -84,11 +94,24 @@ let sketch = function(p) {
         });
     };
 
+    function isOverToolbar(mouseX, mouseY) {
+        // Check if mouse is over any toolbar element
+        const el = document.querySelector(".controls");
+        const rect = el.getBoundingClientRect();
+        if (
+            mouseX >= rect.left &&
+            mouseX <= rect.right &&
+            mouseY >= rect.top &&
+            mouseY <= rect.bottom
+        ) return true;
+        return false;
+    }
+
     // --- Draw Loop ---
     p.draw = function() {
         p.translate(p.width / 2, p.height / 2);
 
-        if (p.mouseIsPressed && p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height) {
+        if (p.mouseIsPressed && p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height && !isOverToolbar(p.mouseX, p.mouseY)) {
             if (!currentStroke) {
                 currentStroke = {
                     points: [],
@@ -173,7 +196,7 @@ let sketch = function(p) {
     }
 
     p.windowResized = function() {
-        p.resizeCanvas(p.windowWidth , p.windowHeight * 0.7);
+        p.resizeCanvas(p.windowWidth , p.windowHeight);
         redrawAll();
     };
 };
