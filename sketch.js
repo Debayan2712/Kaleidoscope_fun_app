@@ -7,8 +7,6 @@ let sketch = function(p) {
     let hueValue = 0; // For cycling through colors
     let brushColor = '#ff0000';
     let bgColor = '#111827';
-    let minBrush = 2;
-    let maxBrush = 30;
     let brushSize = 6;
 
     // --- Undo History ---
@@ -18,6 +16,7 @@ let sketch = function(p) {
     // --- UI Elements ---
     let symmetrySlider, symmetryValueSpan, clearButton, saveButton, undoButton;
     let brushSizeSlider, brushSizeValueSpan, colorPicker, bgColorPicker, randomColorToggle;
+    let showToolbar = false, firstTouch = true, greeting = "draw something with your fingers";
 
     // --- Setup ---
     p.setup = function() {
@@ -32,14 +31,27 @@ let sketch = function(p) {
         bgColorPicker = document.getElementById('bgColorPicker');
         randomColorToggle = document.getElementById('randomColorToggle');
 
+        const controls = document.querySelector('.controls');
+        const toggler = controls.querySelector('.toggler');
+        const chevron = toggler.querySelector('svg');
+        toggler.addEventListener('click', () => {
+            showToolbar = !showToolbar;
+            showToolbar ? controls.style.height = 'initial' : controls.style.height = '3em';
+            chevron.style.rotate = showToolbar ? '180deg' : '0deg';
+        })
+
         const container = document.getElementById('canvas-container');
-        const canvasSize = Math.min(p.windowWidth * 0.8, p.windowHeight * 0.7);
-        let canvas = p.createCanvas(canvasSize, canvasSize);
+        let canvas = p.createCanvas(p.windowWidth, p.windowHeight);
         canvas.parent(container);
 
         p.angleMode(p.DEGREES);
         p.colorMode(p.RGB, 255, 255, 255, 255);
         p.background(p.color(bgColor));
+        p.fill(100);
+        p.textSize(18);
+        p.textFont('Courier New');
+        p.textAlign(p.CENTER, p.CENTER);
+        p.text(greeting, p.width/2, p.height/2);
         angle = 360 / symmetry;
 
         // --- Event Listeners for Controls ---
@@ -59,9 +71,9 @@ let sketch = function(p) {
             brushColor = colorPicker.value;
         });
 
-        randomColorToggle.addEventListener('change', () => {
+        // randomColorToggle.addEventListener('change', () => {
             // No action needed, checked state will be read in draw
-        });
+        // });
 
         bgColorPicker.addEventListener('input', () => {
             bgColor = bgColorPicker.value;
@@ -85,11 +97,30 @@ let sketch = function(p) {
         });
     };
 
+    function isOverToolbar(mouseX, mouseY) {
+        // Check if mouse is over any toolbar element
+        const el = document.querySelector(".controls");
+        const rect = el.getBoundingClientRect();
+        if (
+            mouseX >= rect.left &&
+            mouseX <= rect.right &&
+            mouseY >= rect.top &&
+            mouseY <= rect.bottom
+        ) return true;
+        return false;
+    }
+
     // --- Draw Loop ---
     p.draw = function() {
         p.translate(p.width / 2, p.height / 2);
 
-        if (p.mouseIsPressed && p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height) {
+        if (p.mouseIsPressed && !isOverToolbar(p.mouseX, p.mouseY)
+            && p.mouseX > 0 && p.mouseX < p.width
+            && p.mouseY > 0 && p.mouseY < p.height) {
+      
+            if (firstTouch) p.background(p.color(bgColor));
+            firstTouch = false;
+
             if (!currentStroke) {
                 currentStroke = {
                     points: [],
@@ -174,8 +205,7 @@ let sketch = function(p) {
     }
 
     p.windowResized = function() {
-        const canvasSize = Math.min(p.windowWidth * 0.8, p.windowHeight * 0.7);
-        p.resizeCanvas(canvasSize, canvasSize);
+        p.resizeCanvas(p.windowWidth , p.windowHeight);
         redrawAll();
     };
 };
